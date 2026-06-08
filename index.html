@@ -1,10 +1,102 @@
 <!DOCTYPE html>
-<html>
+<html lang="id">
 <head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Golden Tofu Manager</title>
+
+<style>
+body{
+font-family:Arial,sans-serif;
+background:#f5f5f5;
+padding:20px;
+max-width:600px;
+margin:auto;
+}
+
+.card{
+background:white;
+padding:15px;
+border-radius:10px;
+margin-bottom:15px;
+box-shadow:0 2px 5px rgba(0,0,0,0.1);
+}
+
+input{
+width:100%;
+padding:10px;
+margin-top:5px;
+margin-bottom:10px;
+box-sizing:border-box;
+}
+
+button{
+width:100%;
+padding:12px;
+background:#d4a017;
+color:white;
+border:none;
+border-radius:8px;
+font-size:16px;
+}
+
+h1{
+text-align:center;
+}
+
+.result{
+font-size:18px;
+font-weight:bold;
+}
+</style>
 </head>
+
 <body>
-<h1>Golden Tofu Manager Berhasil Online</h1>
-<p>Website sedang dalam proses pengembangan.</p>
+
+<h1>Golden Tofu Manager</h1>
+
+<div class="card">
+<h3>Modal Awal</h3>
+<input type="number" id="modal" placeholder="Masukkan modal awal">
+</div>
+
+<div class="card">
+<h3>Penjualan Hari Ini</h3>
+<input type="number" id="jualan" placeholder="Total penjualan">
+</div>
+
+<div class="card">
+<h3>Pengeluaran Hari Ini</h3>
+<input type="number" id="pengeluaran" placeholder="Total pengeluaran">
+</div>
+
+<button onclick="hitung()">Hitung</button>
+
+<div class="card">
+<div class="result">Laba Bersih: Rp <span id="laba">0</span></div>
+<br>
+<div class="result">Progress BEP: <span id="bep">0</span>%</div>
+</div>
+
+<script>
+function hitung(){
+let modal = Number(document.getElementById('modal').value);
+let jualan = Number(document.getElementById('jualan').value);
+let pengeluaran = Number(document.getElementById('pengeluaran').value);
+
+let laba = jualan - pengeluaran;
+let bep = 0;
+
+if(modal > 0){
+bep = ((laba/modal)*100).toFixed(1);
+}
+
+document.getElementById('laba').innerText =
+laba.toLocaleString('id-ID');
+
+document.getElementById('bep').innerText = bep;
+}
+</script>
+
 </body>
 </html>
