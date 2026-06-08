@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Golden Tofu Manager</title>
+<style>
+body{font-family:Arial,sans-serif;max-width:800px;margin:auto;padding:15px;background:#f5f5f5}
+.card{background:#fff;padding:15px;margin:10px 0;border-radius:10px}
+input,button,select{padding:10px;margin:5px;width:100%;box-sizing:border-box}
+button{cursor:pointer}
+h1{color:#b8860b}
+table{width:100%;border-collapse:collapse}
+td,th{border:1px solid #ddd;padding:8px}
+</style>
+</head>
+<body>
+<h1>Golden Tofu Manager</h1>
+
+<div class="card">
+<h3>Modal Awal</h3>
+<input id="modal" type="number" placeholder="Masukkan modal awal">
+<button onclick="saveModal()">Simpan Modal</button>
+</div>
+
+<div class="card">
+<h3>Tambah Penjualan</h3>
+<input id="jual" type="number" placeholder="Total penjualan hari ini">
+<button onclick="addSale()">Simpan Penjualan</button>
+</div>
+
+<div class="card">
+<h3>Tambah Pengeluaran</h3>
+<input id="keluar" type="number" placeholder="Total pengeluaran">
+<button onclick="addExpense()">Simpan Pengeluaran</button>
+</div>
+
+<div class="card">
+<h3>Dashboard</h3>
+<p>Modal Awal: Rp <span id="m"></span></p>
+<p>Total Penjualan: Rp <span id="s"></span></p>
+<p>Total Pengeluaran: Rp <span id="e"></span></p>
+<p>Laba Bersih: Rp <span id="p"></span></p>
+<p>Progress BEP: <span id="b"></span>%</p>
+</div>
+
+<div class="card">
+<h3>Riwayat</h3>
+<table>
+<thead><tr><th>Tanggal</th><th>Jenis</th><th>Nominal</th></tr></thead>
+<tbody id="history"></tbody>
+</table>
+</div>
+
+<script>
+let modal=Number(localStorage.getItem("modal")||0);
+let sales=JSON.parse(localStorage.getItem("sales")||"[]");
+
+function save(){
+localStorage.setItem("modal",modal);
+localStorage.setItem("sales",JSON.stringify(sales));
+render();
+}
+
+function saveModal(){
+modal=Number(document.getElementById("modal").value||0);
+save();
+}
+
+function addSale(){
+sales.push({date:new Date().toLocaleDateString(),type:"Penjualan",amount:Number(document.getElementById("jual").value||0)});
+save();
+}
+
+function addExpense(){
+sales.push({date:new Date().toLocaleDateString(),type:"Pengeluaran",amount:-Number(document.getElementById("keluar").value||0)});
+save();
+}
+
+function render(){
+let totalSales=sales.filter(x=>x.amount>0).reduce((a,b)=>a+b.amount,0);
+let totalExpense=Math.abs(sales.filter(x=>x.amount<0).reduce((a,b)=>a+b.amount,0));
+let profit=totalSales-totalExpense;
+let bep=modal?((profit/modal)*100).toFixed(1):0;
+
+document.getElementById("m").innerText=modal.toLocaleString();
+document.getElementById("s").innerText=totalSales.toLocaleString();
+document.getElementById("e").innerText=totalExpense.toLocaleString();
+document.getElementById("p").innerText=profit.toLocaleString();
+document.getElementById("b").innerText=bep;
+
+let h=document.getElementById("history");
+h.innerHTML="";
+sales.slice().reverse().forEach(r=>{
+h.innerHTML+=`<tr><td>${r.date}</td><td>${r.type}</td><td>Rp ${Math.abs(r.amount).toLocaleString()}</td></tr>`;
+});
+}
+render();
+</script>
+</body>
+</html>
